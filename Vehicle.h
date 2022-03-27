@@ -17,7 +17,7 @@ class Vehicle {
 		float engineSize;
 		string fuelType;
 		string transmissionType;
-		string mileage;
+		float mileage;
 		int seatingCapacity;
 		string rentalStatus;
 		float ratePerDay;
@@ -32,23 +32,10 @@ class Vehicle {
 			this->engineSize = 1.0f;
 			this->fuelType = "fuel type";
 			this->transmissionType = "transmission type";
-			this->mileage = "mileage";
+			this->mileage = 1.0f;
 			this->seatingCapacity = 0;
-			this->rentalStatus = "status";
-		}
-		
-		Vehicle(string licensePlateNumber, string brand, string model, string year, string color, float engineSize, string fuelType, string transmissionType, string mileage, int seatingCapacity, string rentalStatus) {
-			this->licensePlateNumber = licensePlateNumber;
-			this->brand = brand;
-			this->model = model;
-			this->year = year;
-			this->color = color;
-			this->engineSize = engineSize;
-			this->fuelType = fuelType;
-			this->transmissionType = transmissionType;
-			this->mileage = mileage;
-			this->seatingCapacity = seatingCapacity;
-			this->rentalStatus = rentalStatus;
+			this->rentalStatus = "no";
+            this->ratePerDay = 0.0f;
 		}
 		
 		// Setters
@@ -57,15 +44,15 @@ class Vehicle {
         }
 
         void setModel(string model){
-            this->model= model;
+            this->model = model;
         }
 
         void setYear(string year){
-            this->year= year;
+            this->year = year;
         }
 
-        void setMileage(string mileage){
-            this->mileage= mileage;
+        void setMileage(float mileage){
+            this->mileage = mileage;
         }
 
         void setSeatingCapacity(int seatingCapacity){
@@ -73,23 +60,23 @@ class Vehicle {
         }
 
         void setEngineSize(float engineSize){
-            this->engineSize= engineSize;
+            this->engineSize = engineSize;
         }
 
         void setBrand(string brand){
-            this->brand= brand;
+            this->brand = brand;
         }
 
         void setColor(string color){
-            this->color= color;
+            this->color = color;
         }
 
         void setTransmissionType(string transmissionType){
-            this->transmissionType= transmissionType;
+            this->transmissionType = transmissionType;
         }
 
-        void setFuelType(string fueltype){
-            this->fuelType= fuelType;
+        void setFuelType(string fuelType){
+            this->fuelType = fuelType;
         }
 
         void setRatePerDay(float ratePerDay){
@@ -114,7 +101,7 @@ class Vehicle {
             return year;
         }
 
-        string getMileage() const{
+        float getMileage() const{
             return mileage;
         }
 
@@ -122,7 +109,7 @@ class Vehicle {
             return seatingCapacity;
         }
 
-        float getEngineSize(){
+        float getEngineSize() const {
             return engineSize;
         }
 
@@ -152,27 +139,6 @@ class Vehicle {
 		
 		
 		// Methods
-		void storeVehicle() {
-			/*
-				Add vehicle information to a file
-			*/
-            try {
-                ofstream outFile("vehicles.mds", std::ios::app);
-
-                if(outFile.fail()) {
-                    throw runtime_error("Cannot access file");
-                }
-
-                outFile << getLicensePlateNum() << "\t" << getBrand() << "\t" << getModel() << "\t" << getYear() << "\t"
-                << getColor() << "\t" << getEngineSize() << "\t" << getFuelType() << getTransmissionType() << "\t" << getSeatingCapacity()
-                << "\t" << getRatePerDay() << "\t" << getRentalStatus() << endl;
-
-                outFile.close();
-
-                cout << "Record stored successfully" << endl;
-            } catch(runtime_error &e) {
-                cerr << e.what() << endl;
-            }
-		}
+		virtual void storeVehicle() const = 0;
 };
 #endif

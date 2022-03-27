@@ -1,11 +1,29 @@
 #include <iostream>
 #include <string>
 #include "User.h"
+#include "Car.h"
+#include "truck.h"
+#include "Bike.h"
 
 using namespace std;
 
+void populateFiles() {
+    // Cars
+    Car c1("7665BG", "Honda", "Fit", "2014", "Blue", 1.5f, "Gas", "CVT", 38941.0f, 5, 11000.0f, "no", "Leather");
+    c1.storeVehicle();
+
+    // Trucks
+    Truck t1("8967PO", "Toyota", "Hilux", "2018", "Orange", 2.4f, "Diesel", "M", 57542.0f, 3, 25000.f, "no", "Nylon", 750);
+    t1.storeVehicle();
+
+    // Bikes
+    Bike b1("7950HI", "Yamaha", "YZF R1", "2018", "Blue", 1.0f, "Gas", "M", 3532.f, 2, 7000.0f, "no", 1);
+    b1.storeVehicle();
+}
+
 
 int main(int argc, char** argv) {
+    populateFiles();
 	User user;
 	int choice;
 	string searchCriteria;

@@ -6,23 +6,53 @@
 
 class Car: public Vehicle {
     private:
-        string interiorType;
+        string carInteriorType;
 
     public:
-        Car() {
-            this->interiorType = 'Nylon';
+        Car(string licensePlateNumber, string brand, string model, string year, string color, float engineSize, string fuelType, string transmissionType, float mileage, int seatingCapacity, float ratePerDay, string rentalStatus, string carInteriorType) {
+            setLicensePlateNumber(licensePlateNumber);
+            setBrand(brand);
+            setModel(model);
+            setYear(year);
+            setColor(color);
+            setEngineSize(engineSize);
+            setFuelType(fuelType);
+            setTransmissionType(transmissionType);
+            setMileage(mileage);
+            setSeatingCapacity(seatingCapacity);
+            setRatePerDay(ratePerDay);
+            setRentalStatus(rentalStatus);
+            setCarInteriorType(carInteriorType);
         }
 
-        Car(string interiorType) {
-            this->interiorType = interiorType;
+        void setCarInteriorType(string carInteriorType) {
+            this->carInteriorType = carInteriorType;
         }
 
-        void setInteriorType() {
-            this->interiorType = interiorType;
+        string getCarInteriorType() const {
+            return carInteriorType;
         }
 
-        string getInteriorType() const {
-            return interiorType;
+        void storeVehicle() const {
+            /*
+				Add car information to a file
+			*/
+            try {
+                ofstream outFile("cars.mds", std::ios::out);
+
+                if(outFile.fail()) {
+                    throw runtime_error("Cannot access file");
+                }
+
+                outFile << getLicensePlateNum() << "\t" << getBrand() << "\t" << getModel() << "\t" << getYear() << "\t"
+                        << getColor() << "\t" << getEngineSize() << "\t" << getFuelType() << "\t" << getTransmissionType() << "\t"
+                        << getMileage() << "\t" << getSeatingCapacity()
+                        << "\t" << getRatePerDay() << "\t" << getCarInteriorType() << "\t" << getRentalStatus() << endl;
+
+                outFile.close();
+            } catch(runtime_error &e) {
+                cerr << e.what() << endl;
+            }
         }
 };
 
