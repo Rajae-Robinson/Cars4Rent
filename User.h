@@ -86,11 +86,64 @@ class User {
 		}
 		
 		// Methods
-		void storeRentalInfo() {
+		void storeRentalInfo(string plateNum) {
 			/*
 				Stores user rental information to a file
-			*/	
+			*/
+            try {
+                ofstream outFile("rentals.mds", std::ios::app);
+
+                if(outFile.fail()) {
+                    throw runtime_error("Cannot access file");
+                }
+
+                outFile << plateNum << "\t" << getCustomerName() << "\t" << getHomeAddress() << "\t" << getPhoneNumber() << "\t" << getDateRented() << "\t"
+                        << getExpectedReturnDate() << "\t" << getDepositPaid() << endl;
+
+                cout << "Vehicle successfully rented." << endl;
+                outFile.close();
+            } catch(runtime_error &e) {
+                cerr << e.what() << endl;
+            }
 		}
+
+        void getRentalInfo() {
+            /*
+             * Get user input for their rental information
+             *
+             */
+            string plateNum, tempName, tempAddress, tempPhoneNumber, today, returnDate;
+            float deposit;
+            cout << "Please select the license plate number of the vehicle you want to rent: " << endl;
+            cin >> plateNum;
+            cin.ignore();
+
+            cout << "Please enter your name: " << endl;
+            getline(cin, tempName);
+            setCustomerName(tempName);
+
+            cout << "Please enter your home address: " << endl;
+            getline(cin, tempAddress);
+            setHomeAddress(tempAddress);
+
+            cout << "Please enter your phone number: " << endl;
+            cin >> tempPhoneNumber;
+            setPhoneNumber(tempPhoneNumber);
+
+            cout << "Please enter today's date in the format (dd-mm-yyyy):" << endl;
+            cin >> today;
+            setDateRented(today);
+
+            cout << "Please enter the date you will return the vehicle in the format (dd-mm-yyyy):" << endl;
+            cin >> returnDate;
+            setDateRented(returnDate);
+
+            cout << "Enter your deposit amount:" << endl;
+            cin >> deposit;
+            setDepositPaid(deposit);
+
+            storeRentalInfo(plateNum);
+        }
 		
 		void viewVehicles() {
 			/*
@@ -161,26 +214,32 @@ class User {
                 std::cerr << e.what() << std::endl;
             }
 
-            string plateNum;
-            string tempName;
-            cout << "Please select the license plate number of the vehicle you want to rent: " << endl;
-            cin >> plateNum;
-
-            cout << "Please enter your name: " << endl;
-            setCustomerName(tempName);
-
+            getRentalInfo();
 		}
 		
 		void searchVehicles(string searchCriteria) {
-			
+			/* Allow the user to search for a vehicle based on anyone of the following criteria:
+                    1. license plate number
+                    2. brand
+                    3. model
+                    4. year
+                    5. interior
+            */
+
 		}
 		
 		void showRentals(int searchId) {
-			
+    		/*
+    		 *
+    		 * Show all the vehicles the user has rented
+    		 *
+            */
+
+
 		}
 		
 		void returnVehicle(string licensePlateNumber) {
-			
+
 		}
 };
 #endif
