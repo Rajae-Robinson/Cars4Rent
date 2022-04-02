@@ -26,9 +26,6 @@ int main(int argc, char** argv) {
     populateFiles();
 	User user;
 	int choice;
-	string searchCriteria;
-	int searchId;
-	string licensePlateNum;
 	
 	cout << "\t------ Welcome to Cars4Rent ------\n\n" << endl;
 	cout << "1. View vehicles\n2. Search vehicles\n3. Show Rentals\n4. Return vehicle" << endl;
@@ -39,20 +36,14 @@ int main(int argc, char** argv) {
 		case 1:
 			user.viewVehicles();
 			break;
-		case 2:
-			cout << "Enter search criteria:" << endl;
-			cin >> searchCriteria;
-			user.searchVehicles(searchCriteria);
+        case 2:
+			user.searchVehicles();
 			break;
-		case 3:
-			cout << "Enter your id:" << endl;
-			cin >> searchId;
-			user.showRentals(searchId);
+        case 3:
+			user.showRentals();
 			break;
 		case 4:
-			cout << "Enter license plate number of vehicle you are returning:" << endl;
-			cin >> licensePlateNum;
-			user.returnVehicle(licensePlateNum);
+			user.returnVehicle();
 			break;
 		default:
 			cout << "Option not recognized!" << endl;
