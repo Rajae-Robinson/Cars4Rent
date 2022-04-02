@@ -84,8 +84,8 @@ class User {
                     throw runtime_error("Cannot access file");
                 }
 
-                outFile << plateNum << "\t" << getCustomerName() << "\t" << getHomeAddress() << "\t" << getPhoneNumber() << "\t" << dateRented.dateString() << "\t"
-                        << expectedReturnDate.dateString() << "\t" << getDepositPaid() << endl;
+                outFile << plateNum << "\t" << getCustomerName() << "\t" << getHomeAddress() << "\t" << getPhoneNumber() << "\t" << dateRented.tabbedDateString() << "\t"
+                        << expectedReturnDate.tabbedDateString() << "\t" << getDepositPaid() << endl;
 
                 cout << "Vehicle successfully rented." << endl;
                 outFile.close();
@@ -243,7 +243,7 @@ class User {
 
         string* retrieveRentalInfo(string plateNumSearch) {
             /* Search by license plate number to get expected return date */
-            string* result = new string[2];
+            string* result = new string[7];
             try {
                 ifstream inFile("rentals.mds", ios::in);
 
@@ -253,16 +253,20 @@ class User {
 
                 bool found = false;
 
-                string plateNum, tempName, tempAddress, tempPhone, tempRentedDate, tempExpectedReturnDate, tempDeposit;
-                int day, month, year;
+                string plateNum, tempName, tempAddress, tempPhone, rentedDay, rentedMonth,
+                rentedYear, expectedReturnDay, expectedReturnMonth, expectedReturnYear, tempDeposit;
                 float deposit;
 
                 while(!found && std::getline(inFile, plateNum, '\t')) {
                     getline(inFile, tempName, '\t');
                     getline(inFile, tempAddress, '\t');
                     getline(inFile, tempPhone, '\t');
-                    getline(inFile, tempRentedDate, '\t');
-                    getline(inFile, tempExpectedReturnDate, '\t');
+                    getline(inFile, rentedDay, '\t');
+                    getline(inFile, rentedMonth, '\t');
+                    getline(inFile, rentedYear, '\t');
+                    getline(inFile, expectedReturnDay, '\t');
+                    getline(inFile, expectedReturnMonth, '\t');
+                    getline(inFile, expectedReturnYear, '\t');
                     getline(inFile, tempDeposit);
 
                     if(plateNum == plateNumSearch) {
@@ -271,13 +275,70 @@ class User {
                 }
                 inFile.close();
                 if(found) {
-                    result[0] = tempExpectedReturnDate;
-                    result[1] = tempDeposit;
+                    result[0] = rentedDay;
+                    result[1] = rentedMonth;
+                    result[2] = rentedYear;
+                    result[3] = expectedReturnDay;
+                    result[4] = expectedReturnMonth;
+                    result[5] = expectedReturnYear;
+                    result[6] = tempDeposit;
                     return result;
                 } else {
                     result[0] = "";
-                    result[1] = "";
                     return result;
+                }
+            } catch(std::runtime_error &e) {
+                std::cerr << e.what() << std::endl;
+            }
+        }
+
+        string retrieveRatePerDay(string vehicle, string plateNumSearch) {
+            /* search through vehicle file and return rate per day on matching license plate num */
+            string file;
+
+            // Determine which vehicle file to search
+            if(vehicle == "car") {
+                file = "cars.mds";
+            } else if(vehicle == "truck") {
+                file = "trucks.mds";
+            } else if(vehicle == "bike") {
+                file = "bikes.mds";
+            }
+
+            // read from vehicle file and return rate per day
+            try {
+                ifstream inFile(file, ios::in);
+
+                if(inFile.fail()) {
+                    throw std::runtime_error("Cannot read from file");
+                }
+
+                bool found = false;
+
+                string plateNum, brand, model, year, color, engineSize, fuelType, transmissionType, mileage, seatCapacity, ratePerDay;
+
+                while(!found && std::getline(inFile, plateNum, '\t')) {
+                    getline(inFile, brand, '\t');
+                    getline(inFile, model, '\t');
+                    getline(inFile, year, '\t');
+                    getline(inFile, color, '\t');
+                    getline(inFile, engineSize, '\t');
+                    getline(inFile, fuelType, '\t');
+                    getline(inFile, transmissionType, '\t');
+                    getline(inFile, mileage, '\t');
+                    getline(inFile, seatCapacity, '\t');
+                    getline(inFile, ratePerDay);
+
+                    if(plateNum == plateNumSearch) {
+                        found = true;
+                    }
+                }
+                inFile.close();
+
+                if(found) {
+                    return ratePerDay;
+                } else {
+                    return "";
                 }
             } catch(std::runtime_error &e) {
                 std::cerr << e.what() << std::endl;
@@ -286,17 +347,20 @@ class User {
 
 		void returnVehicle() {
             string licensePlateNum, vehicleType;
-            int day, month, year, returnedDay, returnedMonth, returnedYear;
-            float mileage;
+            int day, month, year, rentedDay, rentedMonth, rentedYear, expectedReturnDay,
+            expectedReturnMonth, expectedReturnYear;
+            float charge, tempDepositPaid, mileage;
+            float ratePerDay = 0.0f;
+            float overdueFee = 2500.0f;
 
             cout << "Enter license plate number of vehicle you are returning:" << endl;
             cin >> licensePlateNum;
 
-            cout << "Please enter the day you returned the vehicle: e.g. Enter 18 if date is March 18th" << endl;
+            cout << "Please enter today's day number: e.g. Enter 18 if date is March 18th" << endl;
             cin >> day;
-            cout << "Please enter month you returned the vehicle as a numeral: (January is 01 and so on)" << endl;
+            cout << "Please enter current month as a numeral: (January is 01 and so on)" << endl;
             cin >> month;
-            cout << "Please enter year you returned the vehicle" << endl;
+            cout << "Please enter year:" << endl;
             cin >> year;
             Date tempActualReturnDate(day, month, year);
             setActualReturnDate(tempActualReturnDate);
@@ -312,7 +376,48 @@ class User {
             if(rentalInfo[0] == "") {
                 cout << "License plate number not found in list for rented vehicles. Try again!" << endl;
             }
-            // TODO: Calculate receipt
+
+            rentedDay = stoi(rentalInfo[0]);
+            rentedMonth = stoi(rentalInfo[1]);
+            rentedYear = stoi(rentalInfo[2]);
+
+            expectedReturnDay = stoi(rentalInfo[3]);
+            expectedReturnMonth = stoi(rentalInfo[4]);
+            expectedReturnYear = stoi(rentalInfo[5]);
+
+            Date d;
+            Date tempRentedDate(rentedDay, rentedMonth, rentedYear);
+            Date tempExpectedReturnDate(expectedReturnDay, expectedReturnMonth, expectedReturnYear);
+
+            int daysRented = d.getDifference(tempRentedDate, tempExpectedReturnDate);
+            int daysOverdue = d.getDifference(tempExpectedReturnDate, tempActualReturnDate);
+
+            if(retrieveRatePerDay(vehicleType, licensePlateNum) == "") {
+                cout << "Could not find information on vehicle!" << endl;
+            } else {
+                ratePerDay = stof(retrieveRatePerDay(vehicleType, licensePlateNum));
+            }
+
+            tempDepositPaid = stof(rentalInfo[6]);
+
+            // Calculating amount user should be charged
+            cout << "----- RECEIPT INFO ------" << endl;
+            float totalAmount = daysRented * ratePerDay;
+
+            cout << "The total amount to pay is $" << totalAmount << "JMD" << endl;
+
+            if(daysOverdue > 0) {
+                cout << "An additional charge of $" << daysOverdue * overdueFee << "JMD was added because you were "
+                     << daysOverdue << " day(s) late." << endl;
+                totalAmount += daysOverdue * overdueFee;
+                cout << "The adjusted total amount to pay is $" << totalAmount << "JMD" << endl;
+            }
+
+            cout << "You deposited $" << tempDepositPaid << "JMD toward aforementioned balance." << endl;
+
+            charge = totalAmount - tempDepositPaid;
+
+            cout << "You should pay the remaining balance of $" << charge << "JMD" << endl;
 
             // TODO: Update mileage in vehicles file
 		}

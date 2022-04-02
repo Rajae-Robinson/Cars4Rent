@@ -13,7 +13,7 @@ void populateFiles() {
     c1.storeVehicle();
 
     // Trucks
-    Truck t1("8967PO", "Toyota", "Hilux", "2018", "Orange", 2.4f, "Diesel", "M", 57542.0f, 3, 25000.f, "no", "Nylon", 750);
+    Truck t1("8967P0", "Toyota", "Hilux", "2018", "Orange", 2.4f, "Diesel", "M", 57542.0f, 3, 25000.f, "no", "Nylon", 750);
     t1.storeVehicle();
 
     // Bikes
