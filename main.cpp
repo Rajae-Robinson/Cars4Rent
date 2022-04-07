@@ -1,3 +1,16 @@
+/*	Object Oriented Programming
+
+	Object Oriented Programming Project
+
+	C++ Driver File
+
+	Tutor : Mr. Tyrone Edwards
+
+	Group Members : Taje Thomas-1903700
+					Rajae Robinson- 2006677
+					Subrina Powise-
+					Joshua Barett-
+*/
 #include <iostream>
 #include <string>
 #include "User.h"

@@ -216,18 +216,132 @@ class User {
 		}
 		
 		void searchVehicles() {
-			/* Allow the user to search for a vehicle based on anyone of the following criteria:
+			/* Allow the user to search for a vehicle based on any one of the following criteria:
                     1. license plate number
                     2. brand
                     3. model
                     4. year
                     5. interior
             */
-            string searchCriteria;
+            string searchCriteria, vehicle, file;
+            cout << "Enter type of car you want to search for: (car, truck, bike)" << endl;
+            cin >> vehicle;
+            cout << "You may search by: license plate number, brand, model, year, interior" << endl;
             cout << "Enter search criteria:" << endl;
             cin >> searchCriteria;
 
+            // Determine which vehicle file to search
+            if(vehicle == "car") {
+                file = "cars.mds";
+            } else if(vehicle == "truck") {
+                file = "trucks.mds";
+            } else if(vehicle == "bike") {
+                file = "bikes.mds";
+            }
+
+            // read from vehicle file
+            try {
+                ifstream inFile(file, ios::in);
+
+                if(inFile.fail()) {
+                    throw std::runtime_error("Cannot read from file");
+                }
+
+                bool found = false;
+
+                string plateNum, brand, model, year, color, engineSize, fuelType, transmissionType, mileage, seatCapacity, ratePerDay;
+
+                while(!found && std::getline(inFile, plateNum, '\t')) {
+                    getline(inFile, brand, '\t');
+                    getline(inFile, model, '\t');
+                    getline(inFile, year, '\t');
+                    getline(inFile, color, '\t');
+                    getline(inFile, engineSize, '\t');
+                    getline(inFile, fuelType, '\t');
+                    getline(inFile, transmissionType, '\t');
+                    getline(inFile, mileage, '\t');
+                    getline(inFile, seatCapacity, '\t');
+                    getline(inFile, ratePerDay, '\t');
+
+                    if(plateNum == searchCriteria || brand == searchCriteria || model == searchCriteria || year == searchCriteria ) {
+                        found = true;
+                    }
+                }
+                inFile.close();
+
+                if(found) {
+                    cout << "Vehicle found. Here is the information:" << endl;
+                    cout << "Plate number: " << plateNum << endl;
+                    cout << "Brand: " << brand << endl;
+                    cout << "Model: " << model << endl;
+                    cout << "Year: " << year << endl;
+                    cout << "Color: " << color << endl;
+                    cout << "Engine size: " << engineSize << endl;
+                    cout << "Fuel type: " << fuelType << endl;
+                    cout << "Transmission type: " << transmissionType << endl;
+                    cout << "Mileage: " << mileage << endl;
+                    cout << "Seating Capacity: " << seatCapacity << endl;
+                    cout << "Rate per day: " << ratePerDay << endl;
+                } else {
+                    cout << "Vehicle not found! Try using a different search criteria" << endl;
+                }
+            } catch(std::runtime_error &e) {
+                std::cerr << e.what() << std::endl;
+            }
 		}
+
+        string searchVehicles(string vehicle, string plateNumSearch) {
+            /* search through vehicle file and return rate per day on matching license plate num */
+            string file;
+
+            // Determine which vehicle file to search
+            if(vehicle == "car") {
+                file = "cars.mds";
+            } else if(vehicle == "truck") {
+                file = "trucks.mds";
+            } else if(vehicle == "bike") {
+                file = "bikes.mds";
+            }
+
+            // read from vehicle file and return rate per day
+            try {
+                ifstream inFile(file, ios::in);
+
+                if(inFile.fail()) {
+                    throw std::runtime_error("Cannot read from file");
+                }
+
+                bool found = false;
+
+                string plateNum, brand, model, year, color, engineSize, fuelType, transmissionType, mileage, seatCapacity, ratePerDay;
+
+                while(!found && std::getline(inFile, plateNum, '\t')) {
+                    getline(inFile, brand, '\t');
+                    getline(inFile, model, '\t');
+                    getline(inFile, year, '\t');
+                    getline(inFile, color, '\t');
+                    getline(inFile, engineSize, '\t');
+                    getline(inFile, fuelType, '\t');
+                    getline(inFile, transmissionType, '\t');
+                    getline(inFile, mileage, '\t');
+                    getline(inFile, seatCapacity, '\t');
+                    getline(inFile, ratePerDay);
+
+                    if(plateNum == plateNumSearch) {
+                        found = true;
+                    }
+                }
+                inFile.close();
+
+                if(found) {
+                    return ratePerDay;
+                } else {
+                    return "";
+                }
+            } catch(std::runtime_error &e) {
+                std::cerr << e.what() << std::endl;
+            }
+        }
 		
 		void showRentals() {
     		/*
@@ -238,7 +352,6 @@ class User {
             string searchId;
             cout << "Enter your id:" << endl;
             cin >> searchId;
-
 		}
 
         string* retrieveRentalInfo(string plateNumSearch) {
@@ -292,59 +405,6 @@ class User {
             }
         }
 
-        string retrieveRatePerDay(string vehicle, string plateNumSearch) {
-            /* search through vehicle file and return rate per day on matching license plate num */
-            string file;
-
-            // Determine which vehicle file to search
-            if(vehicle == "car") {
-                file = "cars.mds";
-            } else if(vehicle == "truck") {
-                file = "trucks.mds";
-            } else if(vehicle == "bike") {
-                file = "bikes.mds";
-            }
-
-            // read from vehicle file and return rate per day
-            try {
-                ifstream inFile(file, ios::in);
-
-                if(inFile.fail()) {
-                    throw std::runtime_error("Cannot read from file");
-                }
-
-                bool found = false;
-
-                string plateNum, brand, model, year, color, engineSize, fuelType, transmissionType, mileage, seatCapacity, ratePerDay;
-
-                while(!found && std::getline(inFile, plateNum, '\t')) {
-                    getline(inFile, brand, '\t');
-                    getline(inFile, model, '\t');
-                    getline(inFile, year, '\t');
-                    getline(inFile, color, '\t');
-                    getline(inFile, engineSize, '\t');
-                    getline(inFile, fuelType, '\t');
-                    getline(inFile, transmissionType, '\t');
-                    getline(inFile, mileage, '\t');
-                    getline(inFile, seatCapacity, '\t');
-                    getline(inFile, ratePerDay);
-
-                    if(plateNum == plateNumSearch) {
-                        found = true;
-                    }
-                }
-                inFile.close();
-
-                if(found) {
-                    return ratePerDay;
-                } else {
-                    return "";
-                }
-            } catch(std::runtime_error &e) {
-                std::cerr << e.what() << std::endl;
-            }
-        }
-
 		void returnVehicle() {
             string licensePlateNum, vehicleType;
             int day, month, year, rentedDay, rentedMonth, rentedYear, expectedReturnDay,
@@ -392,10 +452,10 @@ class User {
             int daysRented = d.getDifference(tempRentedDate, tempExpectedReturnDate);
             int daysOverdue = d.getDifference(tempExpectedReturnDate, tempActualReturnDate);
 
-            if(retrieveRatePerDay(vehicleType, licensePlateNum) == "") {
+            if(searchVehicles(vehicleType, licensePlateNum) == "") {
                 cout << "Could not find information on vehicle!" << endl;
             } else {
-                ratePerDay = stof(retrieveRatePerDay(vehicleType, licensePlateNum));
+                ratePerDay = stof(searchVehicles(vehicleType, licensePlateNum));
             }
 
             tempDepositPaid = stof(rentalInfo[6]);
